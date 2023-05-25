@@ -9,7 +9,7 @@
 
 static const char *TAG = "FOC task";
 
-float target_Iq = 0.15;
+float target_Iq = 0.1;
 float target_velocity = 5;
 float target_angle = _PI;
 
@@ -20,9 +20,10 @@ void FOCTask(void *pvParameter)
     while (1)
     {
         // FOC_open_loop_voltage_control_loop(2);
-        // FOC_current_control_loop(target_Iq); // 电流环不能加延时，循环频率最高, 测试值：7.2kHz
+        FOC_current_control_loop(target_Iq); // 电流环不能加延时，循环频率最高, 测试值：7.2kHz
         // FOC_velocity_control_loop(target_velocity); // 其他环需要加1ms延时
-        FOC_position_control_loop(target_angle);
-        // 
+        // FOC_position_control_loop(target_angle);
+        // FOC_vel_curr_control_loop(target_velocity);
     }
 }
+

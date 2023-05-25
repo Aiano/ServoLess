@@ -102,8 +102,7 @@ static void uart_init()
 
 static void print_curr()
 {
-    // printf("%.2f,%.3f,%.2f,%.3f\n", target_Iq, output_Iq, 0.0, output_Id);
-    // printf("%.3f,%.3f,", target_velocity, output_velocity);
+    printf("%.2f,%.3f,%.2f,%.3f\n", target_Iq, output_Iq, 0.0, output_Id);
 }
 
 static void print_pos(){
@@ -121,14 +120,9 @@ void comTask(void *pvParameter)
     // uart_init();
     while (1)
     {
-        // Write data to UART.
-        // char *test_str = "A";
-        // uart_write_bytes(UART_NUM_1, (const char *)test_str, strlen(test_str));
-
-        // can_transmit();
-        // print_curr();
+        print_curr();
         // print_loop_period();
-        print_pos();
+        // print_pos();
         vTaskDelay(pdMS_TO_TICKS(10));
     }
 }

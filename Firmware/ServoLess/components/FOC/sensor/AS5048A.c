@@ -8,10 +8,10 @@
 
 // SPI related macros
 #define AS5048A_SPI_HOST SPI2_HOST
-#define AS5048A_SPI_MOSI 8
-#define AS5048A_SPI_MISO 9
-#define AS5048A_SPI_SCLK 10
-#define AS5048A_SPI_CS 11
+#define AS5048A_SPI_MOSI 4
+#define AS5048A_SPI_MISO 3
+#define AS5048A_SPI_SCLK 2
+#define AS5048A_SPI_CS 1
 
 // AS5048A register address
 const uint16_t AS5048A_NOP = 0x0000;

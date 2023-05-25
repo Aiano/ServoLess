@@ -10,7 +10,7 @@
 
 #define TIMER_RESOLUTION_HZ 80000000  // 80MHz
 #define TIMER_PERIOD 250     // 5000 ticks, 62us, 16kHz
-#define MOTOR_IN1_GPIO 1
-#define MOTOR_IN2_GPIO 2
-#define MOTOR_IN3_GPIO 3
-#define MOTOR_EN_GPIO 4
+#define MOTOR_IN1_GPIO 7
+#define MOTOR_IN2_GPIO 6
+#define MOTOR_IN3_GPIO 5
+#define MOTOR_EN_GPIO 8

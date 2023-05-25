@@ -108,3 +108,5 @@
 19936	23351	7027163745913536	D:/Projects/ServoLess/Firmware/can/build/bootloader/.bin_timestamp	f979613c8a38fe05
 23352	23924	0	esp-idf/esptool_py/CMakeFiles/bootloader_check_size	6475311d9ca9a3a3
 23352	23924	0	D:/Projects/ServoLess/Firmware/can/build/bootloader/esp-idf/esptool_py/CMakeFiles/bootloader_check_size	6475311d9ca9a3a3
+19	192	0	esp-idf/esptool_py/CMakeFiles/bootloader_check_size	6475311d9ca9a3a3
+19	192	0	D:/Projects/ServoLess/Firmware/can/build/bootloader/esp-idf/esptool_py/CMakeFiles/bootloader_check_size	6475311d9ca9a3a3

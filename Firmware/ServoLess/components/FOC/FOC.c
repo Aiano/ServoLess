@@ -23,6 +23,7 @@
 
 static const char *TAG = "FOC";
 
+float output_target_Iq;
 float output_Id, output_Iq;
 float output_mechanical_angle, output_velocity;
 uint64_t loop_timer_count;
@@ -287,9 +288,9 @@ void FOC_current_control_loop(float target_Iq)
 {
     static float electrical_angle;
     
-    ESP_ERROR_CHECK(gptimer_get_raw_count(loop_timer, &loop_timer_count));
+    // ESP_ERROR_CHECK(gptimer_get_raw_count(loop_timer, &loop_timer_count));
     electrical_angle = FOC_electrical_angle(); // 106us
-    ESP_ERROR_CHECK(gptimer_set_raw_count(loop_timer, 0)); // Clear counts
+    // ESP_ERROR_CHECK(gptimer_set_raw_count(loop_timer, 0)); // Clear counts
 
     // Current sense
     static float Id, Iq;
@@ -300,8 +301,9 @@ void FOC_current_control_loop(float target_Iq)
     Id = FOC_low_pass_filter(&lpf_current_d, Id);
     Iq = FOC_low_pass_filter(&lpf_current_q, Iq);
 
-    // back feed
     static float Uq, Ud;
+    // back feed
+    
     Uq = pid_get_u(&pid_current_q, target_Iq, Iq);
     Ud = pid_get_u(&pid_current_d, 0, Id);
 
@@ -310,7 +312,8 @@ void FOC_current_control_loop(float target_Iq)
     // Output some values
     output_Iq = Iq;
     output_Id = Id;
-    // printf("%.2f, %.2f\n", Uq, Ud);
+    
+    // printf("%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f\n", cs_current[0], cs_current[1], cs_current[2], Iq, target_Iq, Id, 0.0, Uq, Ud);
     
 }
 
@@ -334,7 +337,22 @@ void FOC_velocity_control_loop(float target_velocity) {
 }
 
 void FOC_vel_curr_control_loop(float target_velocity) {
-    
+    static float now_velocity;
+    static float electrical_angle, mechanical_angle;
+    static float Id, Iq;
+
+    FOC_get_velocity(&now_velocity, &electrical_angle, &mechanical_angle);
+
+    now_velocity = FOC_low_pass_filter(&lpf_velocity, now_velocity);
+
+    output_target_Iq = pid_get_u(&pid_velocity, target_velocity, now_velocity);;
+
+    // Output some values
+    output_velocity = now_velocity;
+
+    printf("%.2f\n", now_velocity);
+
+    vTaskDelay(pdMS_TO_TICKS(10));
 }
 
 void FOC_position_control_loop(float target_angle) {

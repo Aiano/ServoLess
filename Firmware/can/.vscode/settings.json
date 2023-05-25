@@ -12,7 +12,7 @@
         "interface/ftdi/esp32_devkitj_v1.cfg",
         "target/esp32s3.cfg"
     ],
-    "idf.portWin": "COM10",
+    "idf.portWin": "COM11",
     "idf.pythonBinPathWin": "C:\\Users\\Aiano\\.espressif\\python_env\\idf5.0_py3.8_env\\Scripts\\python.exe",
     "idf.toolsPathWin": "C:\\Users\\Aiano\\.espressif"
 }
