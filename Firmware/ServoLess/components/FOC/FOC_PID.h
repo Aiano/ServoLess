@@ -27,6 +27,8 @@ extern PID_Datatype pid_zero_resistance;
 extern PID_Datatype pid_knob;
 extern PID_Datatype pid_current_q;
 extern PID_Datatype pid_current_d;
+extern PID_Datatype pid_curr_vel;
+extern PID_Datatype pid_curr_vel_pos;
 
 void pid_set_parameters();
 float pid_get_u(PID_Datatype *pid, float target, float real);

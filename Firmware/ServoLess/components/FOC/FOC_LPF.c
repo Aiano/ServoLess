@@ -13,7 +13,7 @@ LPF_Datatype lpf_current_q;
 
 void FOC_lpf_set_parameters() {
     lpf_velocity.last_output = 0;
-    lpf_velocity.alpha = 0.16;
+    lpf_velocity.alpha = 0.1;
 
     lpf_spring.last_output = 0;
     lpf_spring.alpha = 0.2;
@@ -24,10 +24,10 @@ void FOC_lpf_set_parameters() {
     }
 
     lpf_current_d.last_output = 0;
-    lpf_current_d.alpha = 0.1;
+    lpf_current_d.alpha = 0.05;
 
     lpf_current_q.last_output = 0;
-    lpf_current_q.alpha = 0.1;
+    lpf_current_q.alpha = 0.05;
 }
 
 float FOC_low_pass_filter(LPF_Datatype *lpf, float input) {

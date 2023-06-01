@@ -28,7 +28,12 @@ typedef enum
 
 extern float output_target_Iq;
 extern float output_Id, output_Iq;
-extern float output_mechanical_angle, output_velocity;
+
+extern float output_target_velocity;
+extern float output_velocity;
+
+extern float output_mechanical_angle, output_electrical_angle;
+
 extern uint64_t loop_timer_count;
 
 void FOC_init();
@@ -48,9 +53,13 @@ void FOC_loop_timer_spin();
 
 // Some modes to choose
 void FOC_open_loop_voltage_control_loop(float Uq);
+
 void FOC_current_control_loop(float target_Iq);
-void FOC_velocity_control_loop(float target_velocity);
 void FOC_vel_curr_control_loop(float target_velocity);
+void FOC_pos_vel_curr_control_loop(float target_angle);
+
+void FOC_velocity_control_loop(float target_velocity);
+
 void FOC_position_control_loop(float target_angle);
 // void FOC_spring_loop(float target_angle, PID_Datatype *pid);
 // void FOC_knob_loop(uint8_t sector_num);

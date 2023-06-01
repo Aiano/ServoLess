@@ -25,7 +25,12 @@ static const char *TAG = "FOC";
 
 float output_target_Iq;
 float output_Id, output_Iq;
-float output_mechanical_angle, output_velocity;
+
+float output_target_velocity;
+float output_velocity;
+
+float output_mechanical_angle, output_electrical_angle;
+
 uint64_t loop_timer_count;
 
 void FOC_init()
@@ -317,6 +322,98 @@ void FOC_current_control_loop(float target_Iq)
     
 }
 
+void FOC_vel_curr_control_loop(float target_velocity) {
+    static float electrical_angle;
+    static float mechanical_angle;
+    static float velocity;
+    static float Id, Iq;
+    static float target_Iq = 0;
+    static float Uq, Ud;
+
+
+    gptimer_get_raw_count(loop_timer, &loop_timer_count);
+    if(loop_timer_count > 2000){ // Vel loop, 2ms 500Hz
+        gptimer_set_raw_count(loop_timer, 0);
+
+        FOC_get_velocity(&velocity, &electrical_angle, &mechanical_angle);
+        velocity = FOC_low_pass_filter(&lpf_velocity, velocity);
+
+        target_Iq = pid_get_u(&pid_curr_vel, target_velocity, velocity);
+    }else{ // Current loop
+        electrical_angle = FOC_electrical_angle();
+        cs_read(); // 60us
+        FOC_Clarke_Park(cs_current[0], cs_current[1], cs_current[2], electrical_angle, &Id, &Iq);
+        Id = FOC_low_pass_filter(&lpf_current_d, Id);
+        Iq = FOC_low_pass_filter(&lpf_current_q, Iq);
+        // back feed
+        Uq = pid_get_u(&pid_current_q, target_Iq, Iq);
+        Ud = pid_get_u(&pid_current_d, 0, Id);
+        
+        FOC_SVPWM(Uq, Ud, electrical_angle);
+    }
+
+    // Output some infomation
+    output_mechanical_angle = mechanical_angle;
+    output_electrical_angle = electrical_angle;
+    output_target_velocity = target_velocity;
+    output_velocity = velocity;
+    output_target_Iq = target_Iq;
+    output_Iq = Iq;
+    output_Id = Id;
+    // printf("%.2f, %.2f, %.2f, %.3f, %.3f\n", velocity, electrical_angle, mechanical_angle, Iq, Id);
+}
+
+void FOC_pos_vel_curr_control_loop(float target_angle){
+    static float electrical_angle;
+    static float mechanical_angle;
+    static float angle_error;
+    static float target_velocity;
+    static float velocity;
+    static float Id, Iq;
+    static float target_Iq = 0;
+    static float Uq, Ud;
+
+
+    gptimer_get_raw_count(loop_timer, &loop_timer_count);
+    if(loop_timer_count > 1000){ // Vel loop, 2ms 500Hz
+        gptimer_set_raw_count(loop_timer, 0);
+
+        FOC_get_velocity(&velocity, &electrical_angle, &mechanical_angle);
+        mechanical_angle = _normalizeAngle(mechanical_angle);
+
+        angle_error = target_angle - mechanical_angle;
+        if (angle_error < -_PI) target_angle += _2PI;
+        else if (angle_error > _PI) target_angle -= _2PI;
+
+        target_velocity = pid_get_u(&pid_curr_vel_pos, target_angle, mechanical_angle);
+
+        velocity = FOC_low_pass_filter(&lpf_velocity, velocity);
+
+        target_Iq = pid_get_u(&pid_curr_vel, target_velocity, velocity);
+    }else{ // Current loop
+        electrical_angle = FOC_electrical_angle();
+        cs_read(); // 60us
+        FOC_Clarke_Park(cs_current[0], cs_current[1], cs_current[2], electrical_angle, &Id, &Iq);
+        Id = FOC_low_pass_filter(&lpf_current_d, Id);
+        Iq = FOC_low_pass_filter(&lpf_current_q, Iq);
+        // back feed
+        Uq = pid_get_u(&pid_current_q, target_Iq, Iq);
+        Ud = pid_get_u(&pid_current_d, 0, Id);
+        
+        FOC_SVPWM(Uq, Ud, electrical_angle);
+    }
+
+    // Output some infomation
+    output_mechanical_angle = mechanical_angle;
+    output_electrical_angle = electrical_angle;
+    output_target_velocity = target_velocity;
+    output_velocity = velocity;
+    output_target_Iq = target_Iq;
+    output_Iq = Iq;
+    output_Id = Id;
+    // printf("%.2f, %.2f, %.2f, %.3f, %.3f\n", velocity, electrical_angle, mechanical_angle, Iq, Id);
+}
+
 /**
  *
  * @param target_velocity unit: rad/s
@@ -336,24 +433,7 @@ void FOC_velocity_control_loop(float target_velocity) {
     vTaskDelay(pdMS_TO_TICKS(1));
 }
 
-void FOC_vel_curr_control_loop(float target_velocity) {
-    static float now_velocity;
-    static float electrical_angle, mechanical_angle;
-    static float Id, Iq;
 
-    FOC_get_velocity(&now_velocity, &electrical_angle, &mechanical_angle);
-
-    now_velocity = FOC_low_pass_filter(&lpf_velocity, now_velocity);
-
-    output_target_Iq = pid_get_u(&pid_velocity, target_velocity, now_velocity);;
-
-    // Output some values
-    output_velocity = now_velocity;
-
-    printf("%.2f\n", now_velocity);
-
-    vTaskDelay(pdMS_TO_TICKS(10));
-}
 
 void FOC_position_control_loop(float target_angle) {
 

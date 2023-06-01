@@ -9,6 +9,8 @@ PID_Datatype pid_damp;
 PID_Datatype pid_zero_resistance;
 PID_Datatype pid_knob;
 
+PID_Datatype pid_curr_vel_pos;
+PID_Datatype pid_curr_vel;
 PID_Datatype pid_current_d;
 PID_Datatype pid_current_q;
 
@@ -90,13 +92,13 @@ void pid_set_parameters() {
     pid_knob.min_u = -4.0;
     pid_knob.dead_zone = 0.0;
 
-    pid_current_q.Kp = 100;
+    pid_current_q.Kp = 50;
     pid_current_q.Ki = 0.1;
     pid_current_q.Kd = 0;
     pid_current_q.integral = 0;
     pid_current_q.last_error = 0;
-    pid_current_q.max_integral = 100.0;
-    pid_current_q.min_integral = -100.0;
+    pid_current_q.max_integral = 200.0;
+    pid_current_q.min_integral = -200.0;
     pid_current_q.max_u = 6.0;
     pid_current_q.min_u = -6.0;
     pid_current_q.dead_zone = 0.0;
@@ -112,6 +114,27 @@ void pid_set_parameters() {
     pid_current_d.min_u = -6.0;
     pid_current_d.dead_zone = 0.0;
 
+    pid_curr_vel.Kp = 0.05;
+    pid_curr_vel.Ki = 0.003;
+    pid_curr_vel.Kd = -0.01; 
+    pid_curr_vel.integral = 0;
+    pid_curr_vel.last_error = 0;
+    pid_curr_vel.max_integral = 200.0; // 200
+    pid_curr_vel.min_integral = -200.0;
+    pid_curr_vel.max_u = 1.0;
+    pid_curr_vel.min_u = -1.0;
+    pid_curr_vel.dead_zone = 0;
+
+    pid_curr_vel_pos.Kp = 2; // 1.5
+    pid_curr_vel_pos.Ki = 0.0; // 0.1
+    pid_curr_vel_pos.Kd = 0; 
+    pid_curr_vel_pos.integral = 0;
+    pid_curr_vel_pos.last_error = 0;
+    pid_curr_vel_pos.max_integral = 100.0; // 200
+    pid_curr_vel_pos.min_integral = -100.0;
+    pid_curr_vel_pos.max_u = 10.0;
+    pid_curr_vel_pos.min_u = -10.0;
+    pid_curr_vel_pos.dead_zone = 0;
 }
 
 /**
